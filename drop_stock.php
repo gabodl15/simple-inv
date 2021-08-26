@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+if(!isset($_SESSION['user_id'])){
+    header('Location: login.php');
+    exit;
+}
+
 require "controladores/connection.php";
 $conexion = new connection;
 $result = $conexion->show_material();

@@ -49,8 +49,6 @@ class connection{
       }else{
         echo '<div class="alert alert-danger" role="alert"> Tendría menos de 0 en almacén </div>';
       }
-      //$this->new_value += $stock;
-      //$this->mysqli->query("update material set quantity = $this->new_value where id_material = $id");
       $this->close();
     }
 
@@ -74,6 +72,34 @@ class connection{
       }else{
           return "No hay datos";
       }
+    }
+
+    public function log_in($user, $pass){
+        $this->connect();
+        $stmt = $this->mysqli->prepare("select password from users where username = ?");
+        $stmt->bind_param('s', $user);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0){
+            // var_dump($stmt);
+            $stmt->bind_result($password);
+            $stmt->fetch();
+
+            if(password_verify($pass,$password))
+        		{
+          					session_regenerate_id();
+          					$_SESSION['user_id'] = TRUE;
+          					$_SESSION['name'] = $user;
+                    header('Location: index.php');
+				    }else{
+              echo "<script>alert('clave o usuario errada')</script>";
+            }
+        }else{
+          echo "<script>alert('clave o usuario errada')</script>";
+        }
+
+        $this->mysqli->close();
     }
 
     public function show_material(){
